@@ -2448,3 +2448,4 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading }: ClientForm
     </div>
   );
 }
+

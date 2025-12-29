@@ -927,3 +927,5 @@ export const insertCancelledClientCreditSchema = cancelledClientCreditSchema.omi
 export type CancelledClientCredit = z.infer<typeof cancelledClientCreditSchema>;
 export type InsertCancelledClientCredit = z.infer<typeof insertCancelledClientCreditSchema>;
 
+
+

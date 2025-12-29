@@ -197,3 +197,9 @@ export async function generateHotelWord(destination: any, bus: any, passengers: 
   const blob = await Packer.toBlob(doc);
   saveAs(blob, `Hotel_${destination.name.replace(/\s+/g, '_')}.docx`);
 }
+<<<<<<< HEAD
+=======
+
+
+
+>>>>>>> 8880eedf0c969df519a29ec10fcca0ec794ec0a0

@@ -1200,3 +1200,4 @@ export function BusOccupancy() {
     </div>
   );
 }
+
