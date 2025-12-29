@@ -500,15 +500,15 @@ export function BusOccupancy() {
     if (!selectedDestination || !selectedBus) return;
     
     try {
-      await generatePassengerManifest(selectedDestination, selectedBus, reservations);
+      await generateEmbarqueWord(selectedDestination, selectedBus, reservations);
       toast({
-        title: "PDF gerado!",
+        title: "Arquivo Word gerado!",
         description: "O manifesto de passageiros foi gerado com sucesso.",
       });
     } catch (error) {
       toast({
         title: "Erro",
-        description: "Não foi possível gerar o PDF. Tente novamente.",
+        description: "Não foi possível gerar o arquivo Word. Tente novamente.",
         variant: "destructive",
       });
     }
