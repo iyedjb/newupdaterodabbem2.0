@@ -11,7 +11,8 @@ import { Armchair, Users, MapPin, FileDown, Bus as BusIcon, Hotel, Save, X, User
 import { useActiveDestinations } from "@/hooks/use-destinations";
 import { useBuses } from "@/hooks/use-buses";
 import { useSeatReservationsByDestination } from "@/hooks/use-seat-reservations";
-import { generatePassengerManifest, generateEmbarquePDF, generateMotoristaPDF, generateHotelPDF, generateListaCompletaPDF } from "@/lib/pdf-generator";
+import { generateEmbarqueWord, generateMotoristaWord } from "@/lib/word-generator";
+import { generateHotelPDF, generateListaCompletaPDF } from "@/lib/pdf-generator";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { DD64Layout } from "@/components/buses/layouts/DD64Layout";
@@ -500,15 +501,15 @@ export function BusOccupancy() {
     if (!selectedDestination || !selectedBus) return;
     
     try {
-      await generatePassengerManifest(selectedDestination, selectedBus, reservations);
+      await generateEmbarqueWord(selectedDestination, selectedBus, reservations);
       toast({
-        title: "PDF gerado!",
+        title: "Arquivo Word gerado!",
         description: "O manifesto de passageiros foi gerado com sucesso.",
       });
     } catch (error) {
       toast({
         title: "Erro",
-        description: "Não foi possível gerar o PDF. Tente novamente.",
+        description: "Não foi possível gerar o arquivo Word. Tente novamente.",
         variant: "destructive",
       });
     }
@@ -539,11 +540,11 @@ export function BusOccupancy() {
       });
       
       if (pendingPDFType === "embarque") {
-        await generateEmbarquePDF(selectedDestination, selectedBus, filteredPassengers);
-        toast({ title: "PDF Embarque gerado!", description: "A lista de embarque foi gerada com sucesso." });
+        await generateEmbarqueWord(selectedDestination, selectedBus, filteredPassengers);
+        toast({ title: "Word Embarque gerado!", description: "A lista de embarque foi gerada com sucesso." });
       } else if (pendingPDFType === "motorista") {
-        await generateMotoristaPDF(selectedDestination, selectedBus, filteredPassengers);
-        toast({ title: "PDF Motorista gerado!", description: "A lista do motorista foi gerada com sucesso." });
+        await generateMotoristaWord(selectedDestination, selectedBus, filteredPassengers);
+        toast({ title: "Word Motorista gerado!", description: "A lista do motorista foi gerada com sucesso." });
       } else if (pendingPDFType === "hotel") {
         await generateHotelPDF(selectedDestination, selectedBus, filteredPassengers);
         toast({ title: "PDF Hotel gerado!", description: "A lista para o hotel foi gerada com sucesso." });
@@ -555,7 +556,7 @@ export function BusOccupancy() {
       setPendingPDFType(null);
       setDeletedPassengerIds(new Set());
     } catch (error) {
-      toast({ title: "Erro", description: "Não foi possível gerar o PDF. Tente novamente.", variant: "destructive" });
+      toast({ title: "Erro", description: "Não foi possível gerar o arquivo Word. Tente novamente.", variant: "destructive" });
     }
   };
 
@@ -708,11 +709,11 @@ export function BusOccupancy() {
                   onClick={() => handleOpenPassengerModal("embarque")}
                   variant="outline"
                   size="sm"
-                  data-testid="button-generate-embarque-pdf"
+                  data-testid="button-generate-embarque-word"
                   disabled={isLoadingPassengers}
                 >
                   <FileDown className="h-4 w-4 mr-2" />
-                  {isLoadingPassengers ? "Carregando..." : "PDF Embarque"}
+                  {isLoadingPassengers ? "Carregando..." : "DOCX Embarque"}
                 </Button>
                 <Button
                   onClick={() => handleOpenPassengerModal("lista_completa")}
@@ -728,11 +729,11 @@ export function BusOccupancy() {
                   onClick={() => handleOpenPassengerModal("motorista")}
                   variant="outline"
                   size="sm"
-                  data-testid="button-generate-motorista-pdf"
+                  data-testid="button-generate-motorista-word"
                   disabled={isLoadingPassengers}
                 >
                   <BusIcon className="h-4 w-4 mr-2" />
-                  {isLoadingPassengers ? "Carregando..." : "PDF Motorista"}
+                  {isLoadingPassengers ? "Carregando..." : "DOCX Motorista"}
                 </Button>
                 <Button
                   onClick={() => handleOpenPassengerModal("hotel")}
@@ -1010,10 +1011,10 @@ export function BusOccupancy() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Users className="h-5 w-5" />
-              Gerenciar Passageiros antes de Gerar PDF
+              Gerenciar Passageiros antes de Gerar Documento
             </DialogTitle>
             <p className="text-sm text-muted-foreground mt-2">
-              Mostrando apenas passageiros com assento no ônibus. Você pode remover passageiros antes de gerar o PDF.
+              Mostrando apenas passageiros com assento no ônibus. Você pode remover passageiros antes de gerar o arquivo.
             </p>
           </DialogHeader>
           
@@ -1037,7 +1038,7 @@ export function BusOccupancy() {
                       {(passenger.client?.cpf || passenger.client?.rg) && (
                         <p className="text-xs text-muted-foreground">CPF/RG: {passenger.client?.cpf || passenger.client?.rg}</p>
                       )}
-                      {isDeleted && <p className="text-xs text-red-600 font-semibold mt-1">Será removido do PDF</p>}
+                      {isDeleted && <p className="text-xs text-red-600 font-semibold mt-1">Será removido do documento</p>}
                     </div>
                     <Button
                       variant="destructive"
@@ -1069,7 +1070,7 @@ export function BusOccupancy() {
               disabled={deleteSeatMutation.isPending}
             >
               <FileDown className="h-4 w-4 mr-2" />
-              Gerar PDF
+              Gerar Arquivo
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -1199,3 +1200,4 @@ export function BusOccupancy() {
     </div>
   );
 }
+
