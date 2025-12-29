@@ -209,7 +209,7 @@ export const childSchema = z.object({
   rg: z.string().optional(),
   cpf: z.string().optional(), // Will be encrypted
   passport_number: z.string().optional(), // Will be encrypted
-  relationship: z.enum(["filho", "filha", "pai", "mae", "sogro", "sogra", "enteado", "enteada", "neto", "neta", "cônjuge", "noivo", "namorado", "outro"]),
+  relationship: z.enum(["filho", "filha", "pai", "mae", "sogro", "sogra", "enteado", "enteada", "neto", "neta", "cônjuge", "noivo", "namorado", "irmao", "irma", "outro"]),
   price: z.number().nonnegative("Preço deve ser maior ou igual a zero").optional(),
   seat_number: z.string().optional(), // Selected seat number on the bus
 });
@@ -926,4 +926,6 @@ export const insertCancelledClientCreditSchema = cancelledClientCreditSchema.omi
 
 export type CancelledClientCredit = z.infer<typeof cancelledClientCreditSchema>;
 export type InsertCancelledClientCredit = z.infer<typeof insertCancelledClientCreditSchema>;
+
+
 
