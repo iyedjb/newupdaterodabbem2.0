@@ -143,6 +143,7 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading }: ClientForm
   
   // Track previous destination to detect actual changes (vs initial load)
   const prevDestinationRef = useRef<string | null>(null);
+  const prevClientRef = useRef<Client | undefined>(client);
   
   // Track which client we've loaded children for (to avoid reloading on every render)
   const loadedClientIdRef = useRef<string | null>(null);
@@ -442,13 +443,16 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading }: ClientForm
         // Check if destination actually changed (not initial load)
         const destinationChanged = prevDestinationRef.current !== null && 
                                    prevDestinationRef.current !== selectedDestinationName;
+        const clientChanged = prevClientRef.current !== client;
+        const isNewTrip = client && !client.destination; // Existing client but starting a "Nova Viagem"
         const isNewClient = !client;
         
-        // Update ref for next comparison
+        // Update refs for next comparison
         prevDestinationRef.current = selectedDestinationName;
+        prevClientRef.current = client;
         
-        // Only run auto-population logic for new clients OR when destination actually changed during edit
-        if (isNewClient || destinationChanged) {
+        // Only run auto-population logic for new clients, new trips for existing clients, OR when destination actually changed
+        if (isNewClient || isNewTrip || destinationChanged) {
           // Always clear travel_level when switching destinations to avoid stale values
           form.setValue("travel_level", undefined);
           
@@ -766,6 +770,7 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading }: ClientForm
   };
 
   const addChild = () => {
+    const currentPrice = form.getValues("travel_price") || 0;
     const newChildren = [...children, {
       name: '',
       birthdate: new Date(),
@@ -774,7 +779,7 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading }: ClientForm
       cpf: '',
       passport_number: '',
       relationship: 'filho',
-      price: 0,
+      price: currentPrice,
     }];
     setChildren(newChildren);
     form.setValue('children', newChildren);
