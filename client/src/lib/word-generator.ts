@@ -1,5 +1,6 @@
 import * as docx from "docx";
 const { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, WidthType, AlignmentType, BorderStyle, ImageRun, HeadingLevel, VerticalAlign } = docx;
+
 import { saveAs } from "file-saver";
 import { format } from "date-fns";
 
@@ -196,5 +197,6 @@ export async function generateHotelWord(destination: any, bus: any, passengers: 
   const blob = await Packer.toBlob(doc);
   saveAs(blob, `Hotel_${destination.name.replace(/\s+/g, '_')}.docx`);
 }
+
 
 
