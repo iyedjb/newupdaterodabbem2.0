@@ -11,7 +11,8 @@ import { Armchair, Users, MapPin, FileDown, Bus as BusIcon, Hotel, Save, X, User
 import { useActiveDestinations } from "@/hooks/use-destinations";
 import { useBuses } from "@/hooks/use-buses";
 import { useSeatReservationsByDestination } from "@/hooks/use-seat-reservations";
-import { generateEmbarqueWord, generateMotoristaWord, generateHotelWord, generateListaCompletaWord } from "@/lib/word-generator";
+import { generateEmbarqueWord, generateMotoristaWord } from "@/lib/word-generator";
+import { generateHotelPDF, generateListaCompletaPDF } from "@/lib/pdf-generator";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { DD64Layout } from "@/components/buses/layouts/DD64Layout";
@@ -545,11 +546,11 @@ export function BusOccupancy() {
         await generateMotoristaWord(selectedDestination, selectedBus, filteredPassengers);
         toast({ title: "Word Motorista gerado!", description: "A lista do motorista foi gerada com sucesso." });
       } else if (pendingPDFType === "hotel") {
-        await generateHotelWord(selectedDestination, selectedBus, filteredPassengers);
-        toast({ title: "Word Hotel gerado!", description: "A lista para o hotel foi gerada com sucesso." });
+        await generateHotelPDF(selectedDestination, selectedBus, filteredPassengers);
+        toast({ title: "PDF Hotel gerado!", description: "A lista para o hotel foi gerada com sucesso." });
       } else if (pendingPDFType === "lista_completa") {
-        await generateListaCompletaWord(selectedDestination, selectedBus, filteredPassengers);
-        toast({ title: "Word Lista Completa gerado!", description: "A lista completa com telefones foi gerada com sucesso." });
+        await generateListaCompletaPDF(selectedDestination, selectedBus, filteredPassengers);
+        toast({ title: "PDF Lista Completa gerado!", description: "A lista completa com telefones foi gerada com sucesso." });
       }
       setShowPassengerModal(false);
       setPendingPDFType(null);
@@ -718,11 +719,11 @@ export function BusOccupancy() {
                   onClick={() => handleOpenPassengerModal("lista_completa")}
                   variant="outline"
                   size="sm"
-                  data-testid="button-generate-lista-completa-word"
+                  data-testid="button-generate-lista-completa-pdf"
                   disabled={isLoadingPassengers}
                 >
                   <FileDown className="h-4 w-4 mr-2" />
-                  {isLoadingPassengers ? "Carregando..." : "DOCX Lista Completa"}
+                  {isLoadingPassengers ? "Carregando..." : "PDF Lista Completa"}
                 </Button>
                 <Button
                   onClick={() => handleOpenPassengerModal("motorista")}
@@ -738,11 +739,11 @@ export function BusOccupancy() {
                   onClick={() => handleOpenPassengerModal("hotel")}
                   variant="outline"
                   size="sm"
-                  data-testid="button-generate-hotel-word"
+                  data-testid="button-generate-hotel-pdf"
                   disabled={isLoadingPassengers}
                 >
                   <Hotel className="h-4 w-4 mr-2" />
-                  {isLoadingPassengers ? "Carregando..." : "DOCX Hotel"}
+                  {isLoadingPassengers ? "Carregando..." : "PDF Hotel"}
                 </Button>
               </div>
             )}
@@ -1010,10 +1011,10 @@ export function BusOccupancy() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Users className="h-5 w-5" />
-              Gerenciar Passageiros antes de Gerar Documento Word
+              Gerenciar Passageiros antes de Gerar Documento
             </DialogTitle>
             <p className="text-sm text-muted-foreground mt-2">
-              Mostrando apenas passageiros com assento no ônibus. Você pode remover passageiros antes de gerar o Word.
+              Mostrando apenas passageiros com assento no ônibus. Você pode remover passageiros antes de gerar o arquivo.
             </p>
           </DialogHeader>
           
@@ -1037,7 +1038,7 @@ export function BusOccupancy() {
                       {(passenger.client?.cpf || passenger.client?.rg) && (
                         <p className="text-xs text-muted-foreground">CPF/RG: {passenger.client?.cpf || passenger.client?.rg}</p>
                       )}
-                      {isDeleted && <p className="text-xs text-red-600 font-semibold mt-1">Será removido do Word</p>}
+                      {isDeleted && <p className="text-xs text-red-600 font-semibold mt-1">Será removido do documento</p>}
                     </div>
                     <Button
                       variant="destructive"
@@ -1069,7 +1070,7 @@ export function BusOccupancy() {
               disabled={deleteSeatMutation.isPending}
             >
               <FileDown className="h-4 w-4 mr-2" />
-              Gerar Word
+              Gerar Arquivo
             </Button>
           </DialogFooter>
         </DialogContent>
