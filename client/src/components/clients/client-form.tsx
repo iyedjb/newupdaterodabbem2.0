@@ -2346,6 +2346,8 @@ export function ClientForm({ client, onSubmit, onCancel, isLoading }: ClientForm
                               <SelectItem value="cônjuge">Cônjuge</SelectItem>
                               <SelectItem value="noivo">Noivo(a)</SelectItem>
                               <SelectItem value="namorado">Namorado(a)</SelectItem>
+                              <SelectItem value="irmao">Irmão</SelectItem>
+                              <SelectItem value="irma">Irmã</SelectItem>
                               <SelectItem value="outro">Outro</SelectItem>
                             </SelectContent>
                           </Select>
